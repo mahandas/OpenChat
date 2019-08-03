@@ -1,7 +1,7 @@
-from google.cloud import translate
+from googletrans import Translator
 import hyper.http20.exceptions as hpy
 
-translator = translate.Client()
+translator = None
 
 LANGUAGES = {
     'af': 'afrikaans',
@@ -159,9 +159,8 @@ def getSupportedLanguages():
 
 def tanslatedata(requestdata, responseLanguage):
     try:
-        #translator = Translator()
-        translation = translator.translate(requestdata,target_language=responseLanguage)
-        return translation['translatedText']
+        translator = Translator()
+        return((translator.translate(requestdata,dest=responseLanguage , src='auto')).text)
     except ValueError:
         return "LANGUAGEINCORRECT"
     except hpy.StreamResetError:

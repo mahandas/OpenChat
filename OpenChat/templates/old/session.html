@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>Flask_Chat_App</title>
+  </head>
+  <body>
+
+    <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+    <div class="message_holder"></div>
+
+    <form action="" method="POST">
+      <input type="text" class="username" placeholder="User Name"/>
+      <input type="text" id="messagebox" class="message" placeholder="Messages"/>
+	  <input type="text" id="Languagebox" class="language1" placeholder="Language"/>
+	        <input type="submit" value="Send"/>
+    </form>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+	
+	
+    <script type="text/javascript">
+	
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+	  $( "#messagebox" ).prop( "disabled", true );
+	  var languageselected = false
+	  
+      socket.on( 'connect', function() {
+        socket.emit( 'ChatProcessing', {
+          data: 'User Connected'
+        } )
+		
+		
+        var form = $( 'form' ).on( 'submit', function( e ) {
+          e.preventDefault()
+		   if (languageselected) {
+            let user_name = $( 'input.username' ).val()
+			let user_input = $( 'input.message' ).val()
+			socket.emit( 'ChatProcessing', {
+				user_name : user_name,
+				message : user_input
+			} )
+        }
+		else{
+            let user_name = $( 'input.username' ).val()
+			let user_lan1 = $( 'input.language1' ).val()
+			socket.emit( 'client_language_mapping', {
+				user_name : user_name,
+				language : user_lan1
+			} )
+			$( "#messagebox" ).prop( "disabled", false );
+			$( "#Languagebox" ).prop( "disabled", true );
+			languageselected = true;
+        }
+		  
+         
+          $( 'input.message' ).val( '' ).focus()
+		  $( 'input.language1' ).val( '' ).focus()
+        } )
+
+      } )
+	  
+	  
+	  
+      socket.on( 'my response', function( msg ) {
+        console.log( msg )
+        if( typeof msg.user_name !== 'undefined' ) {
+          $( 'h3' ).remove()
+          $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
+        }
+      })
+	  
+	  window.onbeforeunload = confirmExit;
+		function confirmExit() {
+		let user_name = $( 'input.username' ).val()
+		socket.emit( 'removeClient_mapping', {
+				user_name : user_name
+			} )
+			}
+    </script>
+
+  </body>
+  
+  </html>

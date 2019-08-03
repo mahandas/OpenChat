@@ -70,7 +70,13 @@
         }
       })
 	  
-	  
+	  window.onbeforeunload = confirmExit;
+		function confirmExit() {
+		let user_name = $( 'input.username' ).val()
+		socket.emit( 'removeClient_mapping', {
+				user_name : user_name
+			} )
+			}
     </script>
 
   </body>
