@@ -6,3 +6,9 @@ Input - Username, Message and base language.
 # Chatroom application 
 
 user sees messages in the base language.
+
+
+# Demo:
+---------------------------------------------------------------------------------------------
+![](OpenChatDemo.gif)
+---------------------------------------------------------------------------------------------
